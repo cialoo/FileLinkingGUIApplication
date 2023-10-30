@@ -1,3 +1,5 @@
+import com.groupdocs.merger.Merger;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +13,8 @@ public class Main extends JFrame{
     private JTextField jText1;
     private JButton jButton2;
     private JTextField jText2;
+    private JButton jButton3;
+    private JTextField jText3;
     private String filename1;
     private String filename2;
 
@@ -39,6 +43,44 @@ public class Main extends JFrame{
                 File f = chooser.getSelectedFile();
                 filename2 = f.getAbsolutePath();
                 jText2.setText(filename2);
+            }
+        });
+        jButton3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String home = System.getProperty("user.home");
+
+                int whereFirstFullName = filename1.lastIndexOf("\\");
+                String firstFullName = filename1.substring(whereFirstFullName + 1);
+                String firstName = firstFullName.split("\\.")[0];
+                String firstExtension = firstFullName.split("\\.")[1];
+
+                int whereSecondFullName = filename2.lastIndexOf("\\");
+                String secondFullName = filename2.substring(whereSecondFullName + 1);
+                String secondName = secondFullName.split("\\.")[0];
+
+                String path = home + "\\Downloads\\" + firstName + "-and-" + secondName + "." + firstExtension;
+
+                Merger merger = null;
+                try {
+                    merger = new Merger(filename1);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                {
+                    try {
+                        merger.join(filename2);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    try {
+                        merger.save(path);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                jText3.setText("Document is in the path: " + path);
             }
         });
     }
